@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>{{ room.name }}</h2>
+    <div id="messages">
+        {% for message in messages %}
+            <p>{{ message.author.name }}: {{ message.content }}</p>
+        {% endfor %}
+    </div>
+    <form id="messageForm" method="POST">
+        <input type="text" id="message" name="message" required>
+        <input type="submit" value="Send">
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='socketio.js') }}"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            socket.emit('join', {{ room.name }});
+        });
+
+        socket.on('message', function(data) {
+            var p = document.createElement('p');
+            p.innerHTML = data.author + ': ' + data.message;
+            document.getElementById('messages').appendChild(p);
+        });
+
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var messageInput = document.getElementById('message');
+            socket.emit('text', {room: {{ room.name }}, message: messageInput.value});
+            messageInput.value = '';
+        });
+    </script>
+{% endblock %}
