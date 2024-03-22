@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Welcome to My App</h2>
-    <p>This is the home page.</p>
+    <h1>Bienvenido a nuestra aplicación de chat!</h1>
+    <p>
+        <a href="{{ url_for('auth.login') }}">Iniciar sesión</a> o
+        <a href="{{ url_for('auth.signup') }}">Registrarse</a>
+    </p>
 {% endblock %}
